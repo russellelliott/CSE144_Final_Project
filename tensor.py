@@ -62,8 +62,8 @@ def process_images(directory_path, target_size):
 
     return data, labels
 
-train_data, train_labels = process_images('train/train', target_size=(32, 32))
-test_data = process_test_images('test/test', target_size=(32, 32))
+train_data, train_labels = process_images('train/train', target_size=(64, 64))
+test_data = process_test_images('test/test', target_size=(64, 64))
 
 
 # Convert NumPy arrays to torch tensors
