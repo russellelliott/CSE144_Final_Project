@@ -1,5 +1,5 @@
 import os
-from PIL import Image
+from PIL import Image, ImageOps
 import numpy as np
 import torch
 
@@ -49,12 +49,24 @@ def process_images(directory_path, target_size):
             # Resize image to target size
             img = img.resize(target_size)
             
+            #Transformationsx
+            img_inverted = ImageOps.invert(img) #invert the image
+            img_rotate = img.rotate(135) #rotate 135 degrees
+            
             # Convert image to NumPy array
             img_array = np.array(img)
+            img_inverted_array = np.array(img_inverted)/255.0
+            img_rotate_array = np.array(img_rotate)/255.0
             
             # Append data and label
             data.append(img_array)
+            data.append(img_inverted_array)
+            data.append(img_rotate_array)
+            
             labels.append(int(class_folder))  # Assuming folder name is the class label
+            labels.append(int(class_folder))  # Assuming folder name is the class label
+            labels.append(int(class_folder))  # Assuming folder name is the class label
+
 
     # Convert to NumPy arrays
     data = np.array(data)
@@ -62,8 +74,8 @@ def process_images(directory_path, target_size):
 
     return data, labels
 
-train_data, train_labels = process_images('train/train', target_size=(64, 64))
-test_data = process_test_images('test/test', target_size=(64, 64))
+train_data, train_labels = process_images('train/train', target_size=(32, 32))
+test_data = process_test_images('test/test', target_size=(32, 32))
 
 
 # Convert NumPy arrays to torch tensors
