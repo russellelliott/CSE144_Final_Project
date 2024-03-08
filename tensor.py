@@ -1,5 +1,5 @@
 import os
-from PIL import Image, ImageOps
+from PIL import Image, ImageOps, ImageEnhance
 import numpy as np
 import torch
 
@@ -44,29 +44,27 @@ def process_images(directory_path, target_size):
             img = Image.open(image_path)
             
             # Convert the image to RGB
-            img = img.convert('RGB') # Resolves an error with inconsistent channels
+            img = img.convert('RGB') 
             
             # Resize image to target size
             img = img.resize(target_size)
             
-            #Transformationsx
-            img_inverted = ImageOps.invert(img) #invert the image
-            img_rotate = img.rotate(135) #rotate 135 degrees
+            # Transformations
+            img_inverted = ImageOps.invert(img)  # Invert the image
+            img_rotate = img.rotate(135)  # Rotate 135 degrees
+            img_flip = img.transpose(Image.FLIP_LEFT_RIGHT)  # Flip the image horizontally
+            img_brightness = ImageEnhance.Brightness(img).enhance(1.5)  # Increase brightness
             
             # Convert image to NumPy array
             img_array = np.array(img)
-            img_inverted_array = np.array(img_inverted)/255.0
-            img_rotate_array = np.array(img_rotate)/255.0
+            img_inverted_array = np.array(img_inverted) / 255.0
+            img_rotate_array = np.array(img_rotate) / 255.0
+            img_flip_array = np.array(img_flip) / 255.0
+            img_brightness_array = np.array(img_brightness) / 255.0
             
             # Append data and label
-            data.append(img_array)
-            data.append(img_inverted_array)
-            data.append(img_rotate_array)
-            
-            labels.append(int(class_folder))  # Assuming folder name is the class label
-            labels.append(int(class_folder))  # Assuming folder name is the class label
-            labels.append(int(class_folder))  # Assuming folder name is the class label
-
+            data.extend([img_array, img_inverted_array, img_rotate_array, img_flip_array, img_brightness_array])
+            labels.extend([int(class_folder)] * 5)  # Assuming folder name is the class label
 
     # Convert to NumPy arrays
     data = np.array(data)
